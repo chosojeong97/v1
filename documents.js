@@ -1,50 +1,62 @@
 document.addEventListener("DOMContentLoaded",()=>{
+    // API
+    const API = 'https://kdt-api.fe.dev-cos.com/documents';
     const pageCreateButton = document.getElementById('pageCreateButton');
     pageCreateButton.addEventListener('click',(event)=>{
-        fetch('http://localhost:3000/posts', {
-            method: 'POST',
-            body: JSON.stringify({
-                title: '',
-                body: '',
-            
-            }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
+        const pageCreateButton = document.getElementById('pageCreateButton');
+        pageCreateButton.addEventListener('click',(event)=>{
+            fetch(API, {
+                method: 'POST',
+                body: JSON.stringify({
+                    title:'',
+                    parent: null
+                }),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                    "x-username" : "team7_pages"
+                },
             })
             .then((response) => response.json())
-            //.then((json) => console.log(json));
             .then((json) => makePageTitle(json))
-           })
+        })
+    });
 
 //페이지 만들기
             const notionList = document.getElementById('notionList');
             const makePageTitle = (data) =>{
              const li = document.createElement('li');
              const a = document.createElement('a');
-             a.href ="#";
+             const sub = data["documents"];
+            
+             a.href ='/page';
              //고유 아이디로 링크아이디 설정
              a.id = data["id"];
              //페이지의 제목이 빈 문자열인경우 새페이지로 표현
              //제목이 있는경우 제목으로표현
              a.textContent= data['title'] ==""?"새페이지":data["title"];
-             //리스트 목록을 클릭했을때 내용연결
-             a.addEventListener('click',(event)=>{
-                event.preventDefault();
-                fetch('http://localhost:3000/posts/'+event.currentTarget.id)
-                .then((response) => response.json())
-                .then((json) =>{
-                    setContents(json)
-                })
-             })
              li.appendChild(a);
-             notionList.appendChild(li)
 
+             //  삭제기능
+             const deleteBtn = document.createElement('a');
+             deleteBtn.textContent = "삭제"
+             deleteBtn.href = "#";
+             deleteBtn.addEventListener('click',(e)=>{e.preventDefault(); deletePage(data); e.target.parentElement.remove();})
+             li.append(deleteBtn);
+             notionList.appendChild(li)
+             if(sub.length != 0){
+                sub.forEach((subData)=>{
+                    makePageTitle(subData)
+                })
+             }
            };
 
         // 페이지 목록 생성
         const getPageTitleList=()=>{
-              fetch('http://localhost:3000/posts')
+               fetch(API,{
+                    headers: {
+                        "x-username" : "team7_pages"
+                    },
+              })
               .then((response) => response.json())
              // .then((json) => console.log(json));
               .then((json) => {
@@ -54,7 +66,7 @@ document.addEventListener("DOMContentLoaded",()=>{
                         }
                     )
                     //목록중 첫번째 페이지 내용을 보여줌
-                    setContents(json[0])
+                    // setContents(json[0])
               })
         }
         getPageTitleList();

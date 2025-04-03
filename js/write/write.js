@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     let lineList;
     let documentBtn = document.querySelectorAll('a[href="/page"]');
     let receivedData;
+    const main = document.querySelector('main');
 
     documentBtn.forEach((document,i)=>{
         document.addEventListener("click", function(e){
@@ -12,9 +13,9 @@ document.addEventListener("DOMContentLoaded",()=>{
             receivedData = e.currentTarget.id;
 
             setTimeout(()=>{
-                pageTitle = document.getElementById('pageTitle');
-                pageText = document.getElementById('pageText');
-                lineList = document.querySelectorAll('#pageText .line .text');
+                pageTitle = main.querySelector('#pageTitle');
+                pageText = main.querySelector('#pageText');
+                lineList = main.querySelectorAll('#pageText .line .text');
 
                 // 페이지 시작시 pageTitle에 focus
                 pageTitle.focus();
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded",()=>{
                         e.preventDefault();
                         pageText.prepend(textLineCreate());
                         // lineInit();
-                        lineList = document.querySelectorAll('#pageText .line .text')
+                        lineList = main.querySelectorAll('#pageText .line .text')
                         lineList[0].focus();
                     }else if(e.keyCode == 40){
                         lineList[0].focus();
@@ -39,13 +40,13 @@ document.addEventListener("DOMContentLoaded",()=>{
                     if(e.target.id === "pageText"){
                         e.currentTarget.append(textLineCreate());
                         // 생성된 마지막 요소에 포커스
-                        document.querySelectorAll('#pageText .line .text')[document.querySelectorAll('#pageText .line .text').length-1].focus();
+                        main.querySelectorAll('#pageText .line .text')[document.querySelectorAll('#pageText .line .text').length-1].focus();
                         save();
                     }
                 });
 
 
-            },4000)
+            },100)
             
         })
     });
